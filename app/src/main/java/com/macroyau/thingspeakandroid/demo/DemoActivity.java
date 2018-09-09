@@ -3,6 +3,8 @@ package com.macroyau.thingspeakandroid.demo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.macroyau.thingspeakandroid.ThingSpeakChannel;
@@ -23,12 +25,25 @@ public class DemoActivity extends AppCompatActivity {
     private ThingSpeakLineChart tsChartHumidity;
     private LineChartView chartViewTemperature;
     private LineChartView chartViewHumidity;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        button = findViewById(R.id.button);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                tsChartTemperature.loadChartData();
+                tsChartHumidity.loadChartData();
+
+                Toast.makeText(DemoActivity.this, "refresh", Toast.LENGTH_LONG).show();
+
+            }
+        });
 
         //łączenie z kanałem/ ustawianie głównych danych + toast
         tsChannel = new ThingSpeakChannel(572256);
@@ -36,7 +51,7 @@ public class DemoActivity extends AppCompatActivity {
             @Override
             public void onChannelFeedUpdated(long channelId, String channelName, ChannelFeed channelFeed) {
                 getSupportActionBar().setTitle("Temperatura/Wilgotność Piotr Kostański");
-                getSupportActionBar().setSubtitle("Channel " + channelId);
+
                 Date lastUpdate = channelFeed.getChannel().getUpdatedAt();
                 Toast.makeText(DemoActivity.this, lastUpdate.toString(), Toast.LENGTH_LONG).show();
             }
@@ -45,7 +60,7 @@ public class DemoActivity extends AppCompatActivity {
 
         // Create a Calendar object dated 5 minutes ago
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, -60);
+        calendar.add(Calendar.HOUR, 24);
 
 
         //TEMPERATURA
