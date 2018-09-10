@@ -92,8 +92,9 @@ public class DemoActivity extends AppCompatActivity {
         //TEMPERATURA
         // Configure LineChartView
         chartViewTemperature = findViewById(R.id.chartTemperature);
-        chartViewTemperature.setZoomEnabled(false);
+        chartViewTemperature.setZoomEnabled(true);
         chartViewTemperature.setValueSelectionEnabled(true);
+        chartViewTemperature.setScrollEnabled(true);
 
         tsChartTemperature = new ThingSpeakLineChart(572256, 1);
 
@@ -104,7 +105,7 @@ public class DemoActivity extends AppCompatActivity {
 
 
 
-        tsChartTemperature.setDateAxisLabelInterval(4);
+        tsChartTemperature.setDateAxisLabelInterval(1);
         // Show the line as a cubic spline
         tsChartTemperature.useSpline(false);
         // Set the line color
@@ -133,8 +134,9 @@ public class DemoActivity extends AppCompatActivity {
         //WILGOTNOSC
         // Configure LineChartView
         chartViewHumidity = findViewById(R.id.chartHumidity);
-        chartViewHumidity.setZoomEnabled(false);
+        chartViewHumidity.setZoomEnabled(true);
         chartViewHumidity.setValueSelectionEnabled(true);
+        chartViewHumidity.setScrollEnabled(true);
 
         tsChartHumidity = new ThingSpeakLineChart(572256, 2);
 
@@ -142,7 +144,8 @@ public class DemoActivity extends AppCompatActivity {
 
         tsChartHumidity.setValueAxisLabelInterval(10);
 
-        tsChartHumidity.setDateAxisLabelInterval(4);
+        tsChartHumidity.setDateAxisLabelInterval(1);
+
         tsChartHumidity.setXAxisName("Czas");
         // Show the line as a cubic spline
         tsChartHumidity.useSpline(false);
