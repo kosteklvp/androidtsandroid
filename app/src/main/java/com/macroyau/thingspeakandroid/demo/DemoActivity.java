@@ -25,23 +25,51 @@ public class DemoActivity extends AppCompatActivity {
     private ThingSpeakLineChart tsChartHumidity;
     private LineChartView chartViewTemperature;
     private LineChartView chartViewHumidity;
-    private Button button;
+    private Button buttonRefresh, buttonGodziny, buttonMinuty;
+    Calendar godziny = Calendar.getInstance();
+    Calendar minuty = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = findViewById(R.id.button);
+        buttonRefresh = findViewById(R.id.button);
+        buttonGodziny = findViewById(R.id.button3);
+        buttonMinuty = findViewById(R.id.button2);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        // Create a Calendar object dated 5 minutes ago
+
+        godziny.add(Calendar.HOUR, -24);
+
+
+        minuty.add(Calendar.MINUTE, -60);
+
+        buttonRefresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
                 tsChartTemperature.loadChartData();
                 tsChartHumidity.loadChartData();
+            }
+        });
 
-                Toast.makeText(DemoActivity.this, "refresh", Toast.LENGTH_LONG).show();
+        buttonGodziny.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                tsChartTemperature.setChartStartDate(godziny.getTime());
+                tsChartHumidity.setChartStartDate(godziny.getTime());
+                tsChartTemperature.loadChartData();
+                tsChartHumidity.loadChartData();
+            }
+        });
 
+        buttonMinuty.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                tsChartTemperature.setChartStartDate(minuty.getTime());
+                tsChartHumidity.setChartStartDate(minuty.getTime());
+                tsChartTemperature.loadChartData();
+                tsChartHumidity.loadChartData();
             }
         });
 
@@ -58,9 +86,7 @@ public class DemoActivity extends AppCompatActivity {
         });
         tsChannel.loadChannelFeed();
 
-        // Create a Calendar object dated 5 minutes ago
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR, 24);
+
 
 
         //TEMPERATURA
@@ -74,8 +100,11 @@ public class DemoActivity extends AppCompatActivity {
         tsChartTemperature.setNumberOfEntries(200);
 
         tsChartTemperature.setValueAxisLabelInterval(10);
+        tsChartTemperature.setXAxisName("Czas");
 
-        tsChartTemperature.setDateAxisLabelInterval(3);
+
+
+        tsChartTemperature.setDateAxisLabelInterval(4);
         // Show the line as a cubic spline
         tsChartTemperature.useSpline(false);
         // Set the line color
@@ -83,7 +112,7 @@ public class DemoActivity extends AppCompatActivity {
         // Set the axis color
         tsChartTemperature.setAxisColor(Color.parseColor("#455a64"));
         // Set the starting date (5 minutes ago) for the default viewport of the chart
-        tsChartTemperature.setChartStartDate(calendar.getTime());
+        tsChartTemperature.setChartStartDate(godziny.getTime());
         // Set listener for chart data update
         tsChartTemperature.setListener(new ThingSpeakLineChart.ChartDataUpdateListener() {
             @Override
@@ -113,7 +142,8 @@ public class DemoActivity extends AppCompatActivity {
 
         tsChartHumidity.setValueAxisLabelInterval(10);
 
-        tsChartHumidity.setDateAxisLabelInterval(2);
+        tsChartHumidity.setDateAxisLabelInterval(4);
+        tsChartHumidity.setXAxisName("Czas");
         // Show the line as a cubic spline
         tsChartHumidity.useSpline(false);
         // Set the line color
@@ -121,7 +151,7 @@ public class DemoActivity extends AppCompatActivity {
         // Set the axis color
         tsChartHumidity.setAxisColor(Color.parseColor("#455a64"));
         // Set the starting date (5 minutes ago) for the default viewport of the chart
-        tsChartHumidity.setChartStartDate(calendar.getTime());
+        tsChartHumidity.setChartStartDate(godziny.getTime());
         // Set listener for chart data update
         tsChartHumidity.setListener(new ThingSpeakLineChart.ChartDataUpdateListener() {
             @Override
