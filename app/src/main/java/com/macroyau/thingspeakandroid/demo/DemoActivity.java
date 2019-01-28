@@ -3,7 +3,6 @@ package com.macroyau.thingspeakandroid.demo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.macroyau.thingspeakandroid.ThingSpeakChannel;
@@ -13,9 +12,7 @@ import com.macroyau.thingspeakandroid.model.ChannelFeed;
 import java.util.Calendar;
 import java.util.Date;
 
-import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
@@ -23,7 +20,7 @@ public class DemoActivity extends AppCompatActivity {
 
     private ThingSpeakChannel tsChannel;
     private final int CHANNEL_ID = 682515;
-    private final int ILOSC_WEJSC = 100;
+    private final int ILOSC_OSTATNICH_WEJSC = 100;
 
     private ThingSpeakLineChart tsChartTemperature;
     private ThingSpeakLineChart tsChartHumidity;
@@ -33,8 +30,8 @@ public class DemoActivity extends AppCompatActivity {
     private LineChartView chartViewTemperature;
     private LineChartView chartViewHumidity;
     private LineChartView chartViewMove;
-    private LineChartView chartViewWater
-            ;
+    private LineChartView chartViewWater;
+
     Calendar godziny = Calendar.getInstance();
     Calendar minuty = Calendar.getInstance();
 
@@ -67,7 +64,7 @@ public class DemoActivity extends AppCompatActivity {
 
         tsChartTemperature = new ThingSpeakLineChart(CHANNEL_ID, 1);
 
-        tsChartTemperature.setNumberOfEntries(ILOSC_WEJSC);
+        tsChartTemperature.setNumberOfEntries(ILOSC_OSTATNICH_WEJSC);
         tsChartTemperature.setValueAxisLabelInterval(1);
         tsChartTemperature.setXAxisName("");
         tsChartTemperature.setDateAxisLabelInterval(10);
@@ -94,7 +91,7 @@ public class DemoActivity extends AppCompatActivity {
 
         tsChartHumidity = new ThingSpeakLineChart(CHANNEL_ID, 2);
 
-        tsChartHumidity.setNumberOfEntries(ILOSC_WEJSC);
+        tsChartHumidity.setNumberOfEntries(ILOSC_OSTATNICH_WEJSC);
         tsChartHumidity.setValueAxisLabelInterval(1);
         tsChartHumidity.setXAxisName("");
         tsChartHumidity.setDateAxisLabelInterval(10);
@@ -121,7 +118,7 @@ public class DemoActivity extends AppCompatActivity {
 
         tsChartMove = new ThingSpeakLineChart(CHANNEL_ID, 5);
 
-        tsChartMove.setNumberOfEntries(ILOSC_WEJSC);
+        tsChartMove.setNumberOfEntries(ILOSC_OSTATNICH_WEJSC);
         tsChartMove.setValueAxisLabelInterval(1);
         tsChartMove.setXAxisName("");
         tsChartMove.setDateAxisLabelInterval(10);
@@ -148,7 +145,7 @@ public class DemoActivity extends AppCompatActivity {
 
         tsChartWater = new ThingSpeakLineChart(CHANNEL_ID, 3);
 
-        tsChartWater.setNumberOfEntries(ILOSC_WEJSC);
+        tsChartWater.setNumberOfEntries(ILOSC_OSTATNICH_WEJSC);
         tsChartWater.setValueAxisLabelInterval(1);
         tsChartWater.setXAxisName("");
         tsChartWater.setDateAxisLabelInterval(10);
