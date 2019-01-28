@@ -3,7 +3,6 @@ package com.macroyau.thingspeakandroid.demo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -14,18 +13,28 @@ import com.macroyau.thingspeakandroid.model.ChannelFeed;
 import java.util.Calendar;
 import java.util.Date;
 
+import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
 public class DemoActivity extends AppCompatActivity {
 
     private ThingSpeakChannel tsChannel;
+    private final int CHANNEL_ID = 682515;
+    private final int ILOSC_WEJSC = 100;
+
     private ThingSpeakLineChart tsChartTemperature;
     private ThingSpeakLineChart tsChartHumidity;
+    private ThingSpeakLineChart tsChartMove;
+    private ThingSpeakLineChart tsChartWater;
+
     private LineChartView chartViewTemperature;
     private LineChartView chartViewHumidity;
-    private Button buttonRefresh, buttonGodziny, buttonMinuty;
+    private LineChartView chartViewMove;
+    private LineChartView chartViewWater
+            ;
     Calendar godziny = Calendar.getInstance();
     Calendar minuty = Calendar.getInstance();
 
@@ -34,51 +43,14 @@ public class DemoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buttonRefresh = findViewById(R.id.button);
-        buttonGodziny = findViewById(R.id.button3);
-        buttonMinuty = findViewById(R.id.button2);
-
-        // Create a Calendar object dated 5 minutes ago
-
         godziny.add(Calendar.HOUR, -24);
-
-
         minuty.add(Calendar.MINUTE, -60);
 
-        buttonRefresh.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
-                tsChartTemperature.loadChartData();
-                tsChartHumidity.loadChartData();
-            }
-        });
-
-        buttonGodziny.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
-                tsChartTemperature.setChartStartDate(godziny.getTime());
-                tsChartHumidity.setChartStartDate(godziny.getTime());
-                tsChartTemperature.loadChartData();
-                tsChartHumidity.loadChartData();
-            }
-        });
-
-        buttonMinuty.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
-                tsChartTemperature.setChartStartDate(minuty.getTime());
-                tsChartHumidity.setChartStartDate(minuty.getTime());
-                tsChartTemperature.loadChartData();
-                tsChartHumidity.loadChartData();
-            }
-        });
-
-        //łączenie z kanałem/ ustawianie głównych danych + toast
-        tsChannel = new ThingSpeakChannel(572256);
+        tsChannel = new ThingSpeakChannel(CHANNEL_ID);
         tsChannel.setChannelFeedUpdateListener(new ThingSpeakChannel.ChannelFeedUpdateListener() {
             @Override
             public void onChannelFeedUpdated(long channelId, String channelName, ChannelFeed channelFeed) {
-                getSupportActionBar().setTitle("Temperatura/Wilgotność Piotr Kostański");
+                getSupportActionBar().setTitle("Aplikacja monitorująca Kostański");
 
                 Date lastUpdate = channelFeed.getChannel().getUpdatedAt();
                 Toast.makeText(DemoActivity.this, lastUpdate.toString(), Toast.LENGTH_LONG).show();
@@ -87,88 +59,154 @@ public class DemoActivity extends AppCompatActivity {
         tsChannel.loadChannelFeed();
 
 
-
-
         //TEMPERATURA
-        // Configure LineChartView
         chartViewTemperature = findViewById(R.id.chartTemperature);
         chartViewTemperature.setZoomEnabled(true);
         chartViewTemperature.setValueSelectionEnabled(true);
         chartViewTemperature.setScrollEnabled(true);
 
-        tsChartTemperature = new ThingSpeakLineChart(572256, 1);
+        tsChartTemperature = new ThingSpeakLineChart(CHANNEL_ID, 1);
 
-        tsChartTemperature.setNumberOfEntries(200);
-
-        tsChartTemperature.setValueAxisLabelInterval(10);
-        tsChartTemperature.setXAxisName("Czas");
-
-
-
-        tsChartTemperature.setDateAxisLabelInterval(1);
-        // Show the line as a cubic spline
+        tsChartTemperature.setNumberOfEntries(ILOSC_WEJSC);
+        tsChartTemperature.setValueAxisLabelInterval(1);
+        tsChartTemperature.setXAxisName("");
+        tsChartTemperature.setDateAxisLabelInterval(10);
         tsChartTemperature.useSpline(false);
-        // Set the line color
         tsChartTemperature.setLineColor(Color.parseColor("#ff2222"));
-        // Set the axis color
         tsChartTemperature.setAxisColor(Color.parseColor("#455a64"));
-        // Set the starting date (5 minutes ago) for the default viewport of the chart
         tsChartTemperature.setChartStartDate(godziny.getTime());
-        // Set listener for chart data update
         tsChartTemperature.setListener(new ThingSpeakLineChart.ChartDataUpdateListener() {
             @Override
             public void onChartDataUpdated(long channelId, int fieldId, String title, LineChartData lineChartData, Viewport maxViewport, Viewport initialViewport) {
-                // Set chart data to the LineChartView
                 chartViewTemperature.setLineChartData(lineChartData);
-                // Set scrolling bounds of the chart
                 chartViewTemperature.setMaximumViewport(maxViewport);
-                // Set the initial chart bounds
                 chartViewTemperature.setCurrentViewport(initialViewport);
             }
         });
-        // Load chart data asynchronously
         tsChartTemperature.loadChartData();
 
 
-
         //WILGOTNOSC
-        // Configure LineChartView
         chartViewHumidity = findViewById(R.id.chartHumidity);
         chartViewHumidity.setZoomEnabled(true);
         chartViewHumidity.setValueSelectionEnabled(true);
         chartViewHumidity.setScrollEnabled(true);
 
-        tsChartHumidity = new ThingSpeakLineChart(572256, 2);
+        tsChartHumidity = new ThingSpeakLineChart(CHANNEL_ID, 2);
 
-        tsChartHumidity.setNumberOfEntries(200);
-
-        tsChartHumidity.setValueAxisLabelInterval(10);
-
-        tsChartHumidity.setDateAxisLabelInterval(1);
-
-        tsChartHumidity.setXAxisName("Czas");
-        // Show the line as a cubic spline
+        tsChartHumidity.setNumberOfEntries(ILOSC_WEJSC);
+        tsChartHumidity.setValueAxisLabelInterval(1);
+        tsChartHumidity.setXAxisName("");
+        tsChartHumidity.setDateAxisLabelInterval(10);
         tsChartHumidity.useSpline(false);
-        // Set the line color
         tsChartHumidity.setLineColor(Color.parseColor("#2222ff"));
-        // Set the axis color
         tsChartHumidity.setAxisColor(Color.parseColor("#455a64"));
-        // Set the starting date (5 minutes ago) for the default viewport of the chart
         tsChartHumidity.setChartStartDate(godziny.getTime());
-        // Set listener for chart data update
         tsChartHumidity.setListener(new ThingSpeakLineChart.ChartDataUpdateListener() {
             @Override
             public void onChartDataUpdated(long channelId, int fieldId, String title, LineChartData lineChartData, Viewport maxViewport, Viewport initialViewport) {
-                // Set chart data to the LineChartView
                 chartViewHumidity.setLineChartData(lineChartData);
-                // Set scrolling bounds of the chart
                 chartViewHumidity.setMaximumViewport(maxViewport);
-                // Set the initial chart bounds
                 chartViewHumidity.setCurrentViewport(initialViewport);
             }
         });
-        // Load chart data asynchronously
         tsChartHumidity.loadChartData();
+
+
+        //RUCH
+        chartViewMove = findViewById(R.id.chartMove);
+        chartViewMove.setZoomEnabled(true);
+        chartViewMove.setValueSelectionEnabled(true);
+        chartViewMove.setScrollEnabled(true);
+
+        tsChartMove = new ThingSpeakLineChart(CHANNEL_ID, 5);
+
+        tsChartMove.setNumberOfEntries(ILOSC_WEJSC);
+        tsChartMove.setValueAxisLabelInterval(1);
+        tsChartMove.setXAxisName("");
+        tsChartMove.setDateAxisLabelInterval(10);
+        tsChartMove.useSpline(false);
+        tsChartMove.setLineColor(Color.parseColor("#22ff22"));
+        tsChartMove.setAxisColor(Color.parseColor("#455a64"));
+        tsChartMove.setChartStartDate(godziny.getTime());
+        tsChartMove.setListener(new ThingSpeakLineChart.ChartDataUpdateListener() {
+            @Override
+            public void onChartDataUpdated(long channelId, int fieldId, String title, LineChartData lineChartData, Viewport maxViewport, Viewport initialViewport) {
+                chartViewMove.setLineChartData(lineChartData);
+                chartViewMove.setMaximumViewport(maxViewport);
+                chartViewMove.setCurrentViewport(initialViewport);
+            }
+        });
+        tsChartMove.loadChartData();
+
+
+        //OPADY
+        chartViewWater = findViewById(R.id.chartWater);
+        chartViewWater.setZoomEnabled(true);
+        chartViewWater.setValueSelectionEnabled(true);
+        chartViewWater.setScrollEnabled(true);
+
+        tsChartWater = new ThingSpeakLineChart(CHANNEL_ID, 3);
+
+        tsChartWater.setNumberOfEntries(ILOSC_WEJSC);
+        tsChartWater.setValueAxisLabelInterval(1);
+        tsChartWater.setXAxisName("");
+        tsChartWater.setDateAxisLabelInterval(10);
+        tsChartWater.useSpline(false);
+        tsChartWater.setLineColor(Color.parseColor("#22ffff"));
+        tsChartWater.setAxisColor(Color.parseColor("#455a64"));
+        tsChartWater.setChartStartDate(godziny.getTime());
+        tsChartWater.setListener(new ThingSpeakLineChart.ChartDataUpdateListener() {
+            @Override
+            public void onChartDataUpdated(long channelId, int fieldId, String title, LineChartData lineChartData, Viewport maxViewport, Viewport initialViewport) {
+                chartViewWater.setLineChartData(lineChartData);
+                chartViewWater.setMaximumViewport(maxViewport);
+                chartViewWater.setCurrentViewport(initialViewport);
+            }
+        });
+        tsChartWater.loadChartData();
+
+
+       /* //WILGOTNOSC
+        // Configure LineChartView
+        chartViewHumidity = findViewById(R.id.chartHumidity);
+        chartViewHumidity.setZoomEnabled(true);
+        chartViewHumidity.setValueSelectionEnabled(true);
+        chartViewHumidity.setScrollEnabled(true);
+        chartViewHumidity.setOnValueTouchListener(new LineChartOnValueSelectListener() {
+            @Override
+            public void onValueSelected(int lineIndex, int pointIndex, PointValue value) {
+                chartViewHumidity.getX();
+                Toast.makeText(DemoActivity.this, "asd", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onValueDeselected() {
+
+            }
+        });
+
+        tsChartHumidity = new ThingSpeakLineChart(682515, 2);
+
+        tsChartHumidity.setNumberOfEntries(100);
+
+        tsChartHumidity.setValueAxisLabelInterval(1);
+
+        tsChartHumidity.setDateAxisLabelInterval(10);
+        tsChartHumidity.setXAxisName("");
+        tsChartHumidity.useSpline(false);
+        tsChartHumidity.setLineColor(Color.parseColor("#2222ff"));
+        tsChartHumidity.setAxisColor(Color.parseColor("#455a64"));
+        tsChartHumidity.setChartStartDate(godziny.getTime());
+        tsChartHumidity.setListener(new ThingSpeakLineChart.ChartDataUpdateListener() {
+            @Override
+            public void onChartDataUpdated(long channelId, int fieldId, String title, LineChartData lineChartData, Viewport maxViewport, Viewport initialViewport) {
+                chartViewHumidity.setLineChartData(lineChartData);
+                chartViewHumidity.setMaximumViewport(maxViewport);
+                chartViewHumidity.setCurrentViewport(initialViewport);
+            }
+        });
+        tsChartHumidity.loadChartData();*/
     }
 
 }
